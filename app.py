@@ -32,7 +32,7 @@ def feedback_response():
 
     The correct (actual) solution can be extracted from the function in the text here:
     ```
-    {reference_solution}
+    {reference_solution[0].page_content}
     ```
 
     ** - Make sure that we have extracted the correct solution from the text. [Don't reveal to students]**
