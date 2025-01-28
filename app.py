@@ -34,18 +34,23 @@ def feedback_response():
     ```
     {reference_solution}
     ```
+
+    ** - Make sure that we have extracted the correct solution from the text. [Don't reveal to students]**
     
     Compare the student's attempt to the correct solution and provide clear, actionable feedback based on this comparison. 
-    
-    - **Explain the Mistake:** Highlight the specific differences between the student's code and the correct solution in a constructive way. Focus on where their logic or implementation diverges and provide clear guidance on how to approach these differences.
+
+    - **Obtain the objective of the function:** From the exctracted correct solution. Find out the objective of the function. 
+
+    - **Explain the Mistake:** Highlight the specific differences between the student's code and the correct solution we have extracted in a constructive way. Using the extracted objective, focus on where their logic or implementation diverges and provide clear guidance on how to approach these differences.
       
-    - **Provide a Hint to Fix It:** Offer a hint that directly addresses the mistake or misunderstanding, but without revealing the correct solution outright. Use the context of the correct solution to guide your hint, ensuring it aligns with the question's objective.
+    - **Provide a Hint to Fix It:** Offer a hint that directly addresses the mistake or misunderstanding, but without revealing the correct solution outright. Use the context of the correct solution's objective to guide your hint.
     
     - **Key Rules for Feedback:**
         - If the student’s function contains placeholders (e.g., ellipsis), assume the student has not yet attempted the problem and encourage them to make an attempt.
         - Avoid mentioning or referencing the document or any external materials. The student should feel that the feedback is derived naturally from their work and the context of the exercise.
         - Do not reference the correct solution explicitly, even if the student’s attempt is incorrect. Instead, guide them toward reevaluating their approach by pointing out key faults or missteps in their code.
         - Focus only on the comparison of the student’s code and the correct solution. Do not raise alarms about missing imports, non-standard functions, or unrelated implementation details unless they are critical to the task.
+        - Take on the role of a Teacher.
         
     Your response should aim to educate the student on how to think about the problem, how to analyze their own solution, and how to iterate toward the correct one.
     """
