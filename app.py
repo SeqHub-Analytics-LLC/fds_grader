@@ -34,14 +34,20 @@ def feedback_response():
     ```
     {reference_solution}
     ```
-
-    Compare the students attempt to the correct solution and provide feedback to the student.
-    - Explain the mistake and give a hint to help them fix it, without revealing the correct solution.
-        - From the correct solution, you should have an idea of the question objective. Use that to provide hints and feedback
-        - Neglect the absence of importing modules. You might see some non-standard function like make_array or a previously defined function. No need to raise alarms. Just focus on compairing the student attempt with the actual solution.
-    - You can only claim that a student is yet to attempt the problem if the placeholders i.e ellipsis still exists in the function block instead of an answer attempt.
-    - The correct answer must not be referenced if a students gets the answer wrong. Instead prompt them to try again by highlighting subtle hints in the fault of their approach or response.
-    - Don't refer to the document. The student don't need to know that you are sourcing from a document.
+    
+    Compare the student's attempt to the correct solution and provide clear, actionable feedback based on this comparison. 
+    
+    - **Explain the Mistake:** Highlight the specific differences between the student's code and the correct solution in a constructive way. Focus on where their logic or implementation diverges and provide clear guidance on how to approach these differences.
+      
+    - **Provide a Hint to Fix It:** Offer a hint that directly addresses the mistake or misunderstanding, but without revealing the correct solution outright. Use the context of the correct solution to guide your hint, ensuring it aligns with the question's objective.
+    
+    - **Key Rules for Feedback:**
+        - If the student’s function contains placeholders (e.g., ellipsis), assume the student has not yet attempted the problem and encourage them to make an attempt.
+        - Avoid mentioning or referencing the document or any external materials. The student should feel that the feedback is derived naturally from their work and the context of the exercise.
+        - Do not reference the correct solution explicitly, even if the student’s attempt is incorrect. Instead, guide them toward reevaluating their approach by pointing out key faults or missteps in their code.
+        - Focus only on the comparison of the student’s code and the correct solution. Do not raise alarms about missing imports, non-standard functions, or unrelated implementation details unless they are critical to the task.
+        
+    Your response should aim to educate the student on how to think about the problem, how to analyze their own solution, and how to iterate toward the correct one.
     """
 
     feedback = chatcompletion(prompt, messages = [], temperature = 0.7, model="gpt-4o")
