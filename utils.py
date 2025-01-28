@@ -13,7 +13,7 @@ def get_solution(exercise_number, file_name):
     embeddings = OpenAIEmbeddings(model="text-embedding-ada-002",openai_api_key=api_key)
 
     # Load the vector store
-    vector_store = FAISS.load_local("exercise_solution_store", embeddings,allow_dangerous_deserialization=True)
+    vector_store = FAISS.load_local("vector_store", embeddings,allow_dangerous_deserialization=True)
 
     # Student's attempt
     student_attempt = f"Get solution for exercise {exercise_number}"
