@@ -37,6 +37,8 @@ def feedback_response():
 
     Compare the students attempt to the correct solution and provide feedback to the student.
     - Explain the mistake and give a hint to help them fix it, without revealing the correct solution.
+        - From the correct solution, you should have an idea of the question objective. Use that to provide hints and feedback
+        - Neglect the absence of importing modules. You might see some non-standard function like make_array or a previously defined function. No need to raise alarms. Just focus on compairing the student attempt with the actual solution.
     - You can only claim that a student is yet to attempt the problem if the placeholders i.e ellipsis still exists in the function block instead of an answer attempt.
     - The correct answer must not be referenced if a students gets the answer wrong. Instead prompt them to try again by highlighting subtle hints in the fault of their approach or response.
     - Don't refer to the document. The student don't need to know that you are sourcing from a document.
