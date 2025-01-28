@@ -46,6 +46,7 @@ def feedback_response():
     - **Provide a Hint to Fix It:** Offer a hint that directly addresses the mistake or misunderstanding, but without revealing the correct solution outright. Use the context of the correct solution's objective to guide your hint.
     
     - **Key Rules for Feedback:**
+        - DO NOT OUTPUT THE FUNCTION OBJECTIVE AS THOUGH YOU ARE REFERRING TO THE FINAL ANSWER AS DONE IN YOUR REASONING TO THE STUDENT. DO NOT TELL THEM THE ACTUAL ANSWER AS WELL.
         - If the student’s function contains placeholders (e.g., ellipsis), assume the student has not yet attempted the problem and encourage them to make an attempt.
         - Avoid mentioning or referencing the document or any external materials. The student should feel that the feedback is derived naturally from their work and the context of the exercise.
         - Do not reference the correct solution explicitly, even if the student’s attempt is incorrect. Instead, guide them toward reevaluating their approach by pointing out key faults or missteps in their code.
