@@ -46,3 +46,4 @@ def chatcompletion(prompt, temperature = 0.7, model="gpt-4o"):
         result = json.loads(response_content)
     except json.JSONDecodeError:
         result = response_content  # If response is not JSON, return it as plain text
+    return result
