@@ -28,21 +28,21 @@ def get_solution(exercise_number, file_name):
     return retrieved_docs
 
 
-# Function to complete chat input using OpenAI's GPT-3.5 Turbo
+# Function to complete chat input using OpenAI's GPT-4 Turbo
 
-def chatcompletion(prompt, messages = [], temperature = 0.7, model="gpt-4o"):
-    messages.append({"role": "user", "content": prompt})
+def chatcompletion(prompt, temperature = 0.7, model="gpt-4o"):
+    messages = [{"role": "system",
+                 "content": """You are a teacher tasked with providing constructive feedback to students. Given the question, the correct solution, and the student's attempt, your goal is to analyze their response, identify errors or areas for improvement, and offer clear, supportive guidance. Address the student directly using 'you'. Ensure your feedback is educational, encouraging, and tailored to help the student learn and improve."""},
+                {"role": "user", "content": prompt}]
     openai_response = openai.chat.completions.create(
         model = model,
         temperature = temperature,
         messages = messages
     )
-    #print(openai_response)
+
     response_content = openai_response.choices[0].message.content
-    #print("Raw response content:", response_content)
 
     try:
         result = json.loads(response_content)
     except json.JSONDecodeError:
         result = response_content  # If response is not JSON, return it as plain text
-    return result
