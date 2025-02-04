@@ -21,42 +21,34 @@ def feedback_response():
     file_name = request.form.get('file_name')
     exercise_number = request.form.get('exercise_number')
     student_attempt = request.form.get('text')
-    reference_solution = get_solution(exercise_number, file_name)
+    search_result = get_solution(exercise_number, file_name)
 
     # Define user Prompt
     prompt = f"""
-    A student has written the following code:
+    A student was presented with the following question:
+    ```
+    {search_result[0].metadata["context_question"]}
+    ```
+    
+    The actual (correct) solution to the question is given below:
+    ```
+    {search_result[0].page_content}
+    ```
+    
+    To this end, they provided the following function as their response (attempt). Student's attempt:
     ```
     {student_attempt}
     ```
-
-    The correct (actual) solution can be extracted from the function in the text here:
-    ```
-    {reference_solution[0].page_content}
-    ```
-
-    ** - Make sure that we have extracted the correct solution from the text. [Don't reveal to students]**
     
-    Compare the student's attempt to the correct solution and provide clear, actionable feedback based on this comparison. 
-
-    - **Obtain the objective of the function:** From the exctracted correct solution. Find out the objective of the function. 
-
-    - **Explain the Mistake:** Highlight the specific differences between the student's code and the correct solution we have extracted in a constructive way. Using the extracted objective, focus on where their logic or implementation diverges and provide clear guidance on how to approach these differences.
-      
-    - **Provide a Hint to Fix It:** Offer a hint that directly addresses the mistake or misunderstanding, but without revealing the correct solution outright. Use the context of the correct solution's objective to guide your hint.
-    
-    - **Key Rules for Feedback:**
-        - DO NOT OUTPUT THE FUNCTION OBJECTIVE AS THOUGH YOU ARE REFERRING TO THE FINAL ANSWER AS DONE IN YOUR REASONING TO THE STUDENT. DO NOT TELL THEM THE ACTUAL ANSWER AS WELL.
-        - If the student’s function contains placeholders (e.g., ellipsis), assume the student has not yet attempted the problem and encourage them to make an attempt.
-        - Avoid mentioning or referencing the document or any external materials. The student should feel that the feedback is derived naturally from their work and the context of the exercise.
-        - Do not reference the correct solution explicitly, even if the student’s attempt is incorrect. Instead, guide them toward reevaluating their approach by pointing out key faults or missteps in their code.
-        - Focus only on the comparison of the student’s code and the correct solution. Do not raise alarms about missing imports, non-standard functions, or unrelated implementation details unless they are critical to the task.
-        - Take on the role of a Teacher.
-        
-    Your response should aim to educate the student on how to think about the problem, how to analyze their own solution, and how to iterate toward the correct one.
+    Compare the students attempt to the correct solution and provide feedback to the student.
+    - Explain the mistake and give a hint to help them fix it, without revealing the correct solution.
+    - You can only claim that a student is yet to attempt the problem if the placeholders i.e ellipsis still exists in the function block instead of an answer attempt.
+    - The correct answer must not be referenced if a students gets the answer wrong. Instead prompt them to try again by highlighting subtle hints in the fault of their approach or response.
+    - Don't refer to the document. The student don't need to know that you are sourcing from a document.
+    - Speak in the first person to the student as a tutor or reviewer.
     """
 
-    feedback = chatcompletion(prompt, messages = [], temperature = 0.7, model="gpt-4o")
+    feedback = chatcompletion(prompt, temperature = 0.7, model="gpt-4o")
 
     # Return the response
     return jsonify({'response': feedback})
