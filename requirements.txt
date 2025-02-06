@@ -16,3 +16,7 @@ unstructured
 fastapi
 uvicorn
 python-dotenv
+flask-cors 
+sqlalchemy 
+psycopg2
+
