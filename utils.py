@@ -1,49 +1,58 @@
-import json
-from langchain_openai import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
-import openai
 import os
-from dotenv import load_dotenv
+import json
+from flask_cors import CORS
+from sqlalchemy import create_engine, text
+from sqlalchemy.exc import SQLAlchemyError
+import openai
 
 # Get the API key from the environment
 api_key = os.getenv("OPENAI_API_KEY")
 
-def get_solution(exercise_number, file_name):
-    # Initialize embeddings
-    embeddings = OpenAIEmbeddings(model="text-embedding-ada-002",openai_api_key=api_key)
+def get_exercise_details(file_name, exercise_number):
+    """
+    Queries PostgreSQL for context_question and answer based on file_name and exercise_number.
+    
+    Returns:
+        tuple: (context_question, answer) if found, otherwise (None, None).
+    """
+    query = text(f"""
+        SELECT context_question, answer 
+        FROM {TABLE_NAME} 
+        WHERE file_name = :file_name 
+          AND exercise_number = :exercise_number
+        LIMIT 1;
+    """)
 
-    # Load the vector store
-    vector_store = FAISS.load_local("vector_store", embeddings,allow_dangerous_deserialization=True)
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(query, {"file_name": file_name, "exercise_number": exercise_number}).fetchone()
+        return result if result else (None, None)
+    except SQLAlchemyError as e:
+        print(f"Database Error: {e}")
+        return None, None
 
-    # Student's attempt
-    student_attempt = f"Get solution for exercise {exercise_number}"
+def chatcompletion(prompt, temperature=0.7, model="gpt-4o"):
+    """
+    Generates feedback for the student's response using OpenAI's GPT model.
 
-    #Retrieve relevant exercises for a specific course and lab
-    filters = {
-        "file_name": file_name,
-        'exercise_number': exercise_number
-    }
+    Args:
+        prompt (str): The input prompt for the model.
+        temperature (float, optional): Sampling temperature. Default is 0.7.
+        model (str, optional): OpenAI model. Default is "gpt-4o".
 
-    retrieved_docs = vector_store.similarity_search(student_attempt, k=1, filter=filters)
-    return retrieved_docs
-
-
-# Function to complete chat input using OpenAI's GPT-4 Turbo
-
-def chatcompletion(prompt, temperature = 0.7, model="gpt-4o"):
+    Returns:
+        str: AI-generated feedback response.
+    """
     messages = [{"role": "system",
                  "content": """You are a teacher tasked with providing constructive feedback to students. Given the question, the correct solution, and the student's attempt, your goal is to analyze their response, identify errors or areas for improvement, and offer clear, supportive guidance. Address the student directly using 'you'. Ensure your feedback is educational, encouraging, and tailored to help the student learn and improve."""},
                 {"role": "user", "content": prompt}]
-    openai_response = openai.chat.completions.create(
-        model = model,
-        temperature = temperature,
-        messages = messages
-    )
-
-    response_content = openai_response.choices[0].message.content
-
     try:
-        result = json.loads(response_content)
-    except json.JSONDecodeError:
-        result = response_content  # If response is not JSON, return it as plain text
-    return result
+        openai_response = openai.ChatCompletion.create(
+            model=model,
+            temperature=temperature,
+            messages=messages
+        )
+        return openai_response['choices'][0]['message']['content']
+    except Exception as e:
+        print(f"OpenAI API Error: {e}")
+        return "An error occurred while generating feedback. Please try again later."
