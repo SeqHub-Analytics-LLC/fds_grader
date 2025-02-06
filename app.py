@@ -5,6 +5,7 @@ from flask_cors import CORS
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 import openai
+from utils import *
 
 # Initialize Flask App
 app = Flask(__name__)
