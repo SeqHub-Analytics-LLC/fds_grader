@@ -31,6 +31,11 @@ engine = create_engine(
     pool_recycle=1800,
     pool_pre_ping=True
 )
+
+@app.route('/')
+def home():
+    return "Hello Pierrepont students!"
+
 @app.route('/feedback', methods=['POST'])
 def feedback_response():
     """
