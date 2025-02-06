@@ -1,25 +1,23 @@
 import os
 import json
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+import openai
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
-import openai
+from pydantic import BaseModel
 from utils import *
 
-# Initialize Flask App
-app = Flask(__name__)
-CORS(app)  # Enable CORS for cross-origin requests
 
 # Database Credentials
 DB_USERNAME = os.getenv('DB_USERNAME')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_HOST = os.getenv('DB_HOST')
-DB_PORT = os.getenv('DB_PORT')
+DB_PORT = os.getenv('DB_PORT', "5432")
 DB_NAME = os.getenv('DB_NAME')
-TABLE_NAME = "exercise_store" 
+TABLE_NAME = "exercise_store"
 
-# OpenAI API Key (Store securely)
+# OpenAI API Key
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 openai.api_key = OPENAI_API_KEY
 
@@ -32,12 +30,31 @@ engine = create_engine(
     pool_pre_ping=True
 )
 
-@app.route('/')
-def home():
-    return "Hello Pierrepont students!"
+# Initialize FastAPI App
+app = FastAPI()
 
-@app.route('/feedback', methods=['POST'])
-def feedback_response():
+# Enable CORS for frontend integration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Change to specific origins in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Pydantic Model for API Request Validation
+class FeedbackRequest(BaseModel):
+    file_name: str
+    exercise_number: str
+    student_attempt: str
+
+@app.get("/")
+async def home():
+    """ Home Route """
+    return {"message": "Hello Pierrepont students!"}
+
+@app.post("/feedback")
+async def feedback_response(request: FeedbackRequest):
     """
     API endpoint to receive student attempts and provide feedback.
 
@@ -49,17 +66,15 @@ def feedback_response():
     }
     """
     try:
-        data = request.get_json()
-        file_name = data.get("file_name")
-        exercise_number = data.get("exercise_number")
-        student_attempt = data.get("student_attempt")
+        file_name = request.file_name
+        exercise_number = request.exercise_number
+        student_attempt = request.student_attempt
 
-        if not file_name or not exercise_number or not student_attempt:
-            return jsonify({'error': 'Missing required parameters'}), 400
-
-        context_question, answer = get_exercise_details(file_name, exercise_number)
+        # Fetch question and correct answer from database
+        context_question, answer = get_exercise_details(engine, file_name, exercise_number)
+        print(context_question, answer)
         if not context_question or not answer:
-            return jsonify({'error': 'Exercise details not found'}), 404
+            raise HTTPException(status_code=404, detail="Exercise details not found")
 
         # Define user Prompt
         prompt = f"""
@@ -80,18 +95,23 @@ def feedback_response():
 
         Compare the students attempt to the correct solution and provide feedback to the student.
         - Explain the mistake and give a hint to help them fix it, without revealing the correct solution.
-        - You can only claim that a student is yet to attempt the problem if the placeholders i.e ellipsis still exists in the function block instead of an answer attempt.
-        - The correct answer must not be referenced if a students gets the answer wrong. Instead prompt them to try again by highlighting subtle hints in the fault of their approach or response.
-        - Don't refer to the document. The student don't need to know that you are sourcing from a document.
+        - You can only claim that a student is yet to attempt the problem if the placeholders i.e ellipsis still exist in the function block instead of an answer attempt.
+        - The correct answer must not be referenced if a student gets the answer wrong. Instead, prompt them to try again by highlighting subtle hints in the fault of their approach or response.
+        - Don't refer to the document. The student doesn't need to know that you are sourcing from a document.
         - Speak in the first person to the student as a tutor or reviewer.
         """
 
         feedback = chatcompletion(prompt)
-        return jsonify({'response': feedback})
+        return {"response": feedback}
 
+    except HTTPException as http_err:
+        raise http_err
     except Exception as e:
         print(f"Server Error: {e}")
-        return jsonify({'error': 'Internal Server Error'}), 500
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+    
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+
