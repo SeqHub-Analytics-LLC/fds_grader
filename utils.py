@@ -1,14 +1,15 @@
 import os
 import json
-from flask_cors import CORS
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 import openai
 
 # Get the API key from the environment
+
+TABLE_NAME = "exercise_store"
 api_key = os.getenv("OPENAI_API_KEY")
 
-def get_exercise_details(file_name, exercise_number):
+def get_exercise_details(engine, file_name, exercise_number):
     """
     Queries PostgreSQL for context_question and answer based on file_name and exercise_number.
     
@@ -47,12 +48,11 @@ def chatcompletion(prompt, temperature=0.7, model="gpt-4o"):
                  "content": """You are a teacher tasked with providing constructive feedback to students. Given the question, the correct solution, and the student's attempt, your goal is to analyze their response, identify errors or areas for improvement, and offer clear, supportive guidance. Address the student directly using 'you'. Ensure your feedback is educational, encouraging, and tailored to help the student learn and improve."""},
                 {"role": "user", "content": prompt}]
     try:
-        openai_response = openai.ChatCompletion.create(
+        openai_response = openai.chat.completions.create(
             model=model,
             temperature=temperature,
             messages=messages
         )
-        return openai_response['choices'][0]['message']['content']
+        return openai_response.choices[0].message.content
     except Exception as e:
-        print(f"OpenAI API Error: {e}")
         return "An error occurred while generating feedback. Please try again later."
