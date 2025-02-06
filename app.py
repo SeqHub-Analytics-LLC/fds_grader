@@ -72,7 +72,7 @@ async def feedback_response(request: FeedbackRequest):
 
         # Fetch question and correct answer from database
         context_question, answer = get_exercise_details(engine, file_name, exercise_number)
-        print(context_question, answer)
+        
         if not context_question or not answer:
             raise HTTPException(status_code=404, detail="Exercise details not found")
 
