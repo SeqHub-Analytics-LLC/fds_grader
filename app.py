@@ -75,7 +75,7 @@ def feedback_response():
 
         To this end, they provided the following function as their response (attempt). Student's attempt:
         ```
-        {student_code}
+        {student_attempt}
         ```
 
         Compare the students attempt to the correct solution and provide feedback to the student.
