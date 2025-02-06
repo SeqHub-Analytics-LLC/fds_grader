@@ -110,8 +110,3 @@ async def feedback_response(request: FeedbackRequest):
         print(f"Server Error: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
-
