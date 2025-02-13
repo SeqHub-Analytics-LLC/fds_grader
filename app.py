@@ -83,24 +83,27 @@ async def feedback_response(request: FeedbackRequest):
         {context_question}
         ```
 
-        The actual (correct) solution to the question is given below:
+        The correct solution to this question is:
         ```
         {answer}
         ```
-
-        To this end, they provided the following function as their response (attempt). Student's attempt:
+        
+        The student submitted the following function as their attempt:
         ```
         {student_attempt}
         ```
-
-        Compare the students attempt to the correct solution and provide feedback to the student.
-        - If student code matches the answer. Tell them that they are correct. No need for extra-details about what could have been done better.
-        - If the student code doesn't match the answer. Explain the mistake and give a hint to help them fix it, without revealing the correct solution.
-            - The correct answer must not be referenced if a student gets the answer wrong. Instead, prompt them to try again by highlighting subtle hints in the fault of their approach or response.
-        - Make no mention of indentation issues or failure to import necessary modules.
-        - You can only claim that a student is yet to attempt the problem if the placeholders i.e ellipsis still exist in the function block instead of an answer attempt.
-        - Don't refer to the document. The student doesn't need to know that you are sourcing from a document.
-        - Speak in the first person to the student as a tutor or reviewer.
+        
+        Provide constructive feedback on the student's attempt:
+        
+        - If the student's solution is **functionally equivalent** to the correct solution, acknowledge that they are correct. Do not critique minor differences in style, naming, or structure.
+        - If the student's solution is incorrect:
+          - Identify the mistake and provide a helpful hint to guide them toward fixing it, without directly revealing the correct solution.
+          - Recognize when their approach is close but flawed, and offer specific guidance on what needs adjustment.
+          - Do not reference the correct solution—encourage them to refine their approach through subtle hints.
+        - Accept alternative correct implementations, as long as they achieve the same result using valid logic.
+        - Do not mention minor issues like indentation, formatting, or missing imports.
+        - If the student's function still contains placeholders (e.g., `...`), assume they have not attempted the problem yet.
+        - Avoid referring to any external document. Speak directly to the student as a tutor or reviewer, using first-person language.
         """
 
         feedback = chatcompletion(prompt)
@@ -111,4 +114,3 @@ async def feedback_response(request: FeedbackRequest):
     except Exception as e:
         print(f"Server Error: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
-    
