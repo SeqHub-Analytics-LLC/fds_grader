@@ -93,17 +93,18 @@ async def feedback_response(request: FeedbackRequest):
         {student_attempt}
         ```
         
-        Provide constructive feedback on the student's attempt:
         
-        - If the student's solution is **functionally equivalent** to the correct solution, acknowledge that they are correct. Do not critique minor differences in style, naming, or structure.
-        - If the student's solution is incorrect:
-          - Identify the mistake and provide a helpful hint to guide them toward fixing it, without directly revealing the correct solution.
-          - Recognize when their approach is close but flawed, and offer specific guidance on what needs adjustment.
-          - Do not reference the correct solution—encourage them to refine their approach through subtle hints.
-        - Accept alternative correct implementations, as long as they achieve the same result using valid logic.
-        - Do not mention minor issues like indentation, formatting, or missing imports.
-        - If the student's function still contains placeholders (e.g., `...`), assume they have not attempted the problem yet.
-        - Avoid referring to any external document. Speak directly to the student as a tutor or reviewer, using first-person language.
+        ### Provide feedback based on the following rules:
+        - You don't need to fact check the correct solution provided with the question. Assume that the correct solution is absolute for the question.
+        - **If the student's code is functionally identical to the correct solution**, simply state that their answer is correct—**nothing more, no extra feedback or best-practice suggestions.**
+        - **If their solution is incorrect**, do the following:
+          - Identify the mistake and provide a **clear but concise** hint to guide them toward fixing it—**without revealing the correct solution.**
+          - Do not give best-practice suggestions or general coding advice—focus only on the specific mistake.
+        - Accept alternative correct implementations **as long as they achieve the same result using valid logic.**
+        - **Do not mention** minor issues like indentation, formatting, or missing imports.
+        - **If the function still contains placeholders (e.g., `...`), assume the student has not attempted the problem yet.**
+        - **Avoid referring to any external document.** Speak directly to the student as a tutor or reviewer, using first-person language.
+
         """
 
         feedback = chatcompletion(prompt)
