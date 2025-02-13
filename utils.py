@@ -32,7 +32,7 @@ def get_exercise_details(engine, file_name, exercise_number):
         print(f"Database Error: {e}")
         return None, None
 
-def chatcompletion(prompt, temperature=0.7, model="gpt-4o"):
+def chatcompletion(prompt, temperature=0.87, model="gpt-4o"):
     """
     Generates feedback for the student's response using OpenAI's GPT model.
 
