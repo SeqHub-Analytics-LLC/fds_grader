@@ -47,6 +47,7 @@ def chatcompletion(prompt, temperature=0.87, model="gpt-4o"):
     messages = [{"role": "system",
                  "content": """You are a teacher tasked with providing constructive feedback to students. Given the question, the correct solution, and the student's attempt, your goal is to analyze their response, identify errors or areas for improvement, and offer clear, supportive guidance. Address the student directly using 'you'. Ensure your feedback is educational, encouraging, and tailored to help the student learn and improve."""},
                 {"role": "user", "content": prompt}]
+    print(messages)
     try:
         openai_response = openai.chat.completions.create(
             model=model,
@@ -55,4 +56,5 @@ def chatcompletion(prompt, temperature=0.87, model="gpt-4o"):
         )
         return openai_response.choices[0].message.content
     except Exception as e:
+        print(e)
         return "An error occurred while generating feedback. Please try again later."
